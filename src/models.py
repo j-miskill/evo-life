@@ -44,6 +44,13 @@ class Genome:
             return self.geneset[day]
         except Exception as e:
             print("Geneset does not include: ", day, ". Please request a valid day.")
+
+    def evaluate_phenotype(self):
+        """
+            perhaps here is where we could evaluate the genotype and calculate what the phenotype would look
+            like, depending on what we deemed to be interesting enough for us to look at.
+        """
+        pass
             
         
 
