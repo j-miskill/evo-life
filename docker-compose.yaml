@@ -4,7 +4,7 @@ volumes:
   airflow_data:
 
 networks:
-  cbm_airflow_network:
+  cbm_network:
     driver: bridge
 
 x-airflow-common:
@@ -37,7 +37,7 @@ x-airflow-common:
     airflow-pg-db:
       condition: service_healthy
   networks:
-    - cbm_airflow_network
+    - cbm_network
 
 
 services:
@@ -60,7 +60,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - cbm_airflow_network
+      - cbm_network
 
   # Airflow Init
   airflow-init:
@@ -102,32 +102,46 @@ services:
 
 
   # MySQL Database for App
-  cbm-app-db:
+  cbm-mysql-db:
     image: mysql:latest
+    container_name: cbm_app_db
     environment:
-      MYSQL_ROOT_PASSWORD: evolife_root_password
+      MYSQL_ROOT_PASSWORD: evolife
       MYSQL_DATABASE: cbm_health_db
       MYSQL_USER: cbmteam
       MYSQL_PASSWORD: evolife
+    restart: always
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./dtabase/evolife_db_init.sql:/docker-entrypoint-initdb.d/evolife_db_init.sql
+      - ./database/evolife_db_init.sql:/docker-entrypoint-initdb.d/evolife_db_init.sql
 
-  # # App Service
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: AppDockerfile
-  #   environment:
-  #     - DB_HOST=mysql
-  #     - DB_PORT=3306
-  #     - DB_USER=root
-  #     - DB_PASSWORD=root_password
-  #     - DB_NAME=app_db
-  #   depends_on:
-  #     - cbm-app-db
-  #   ports:
-  #     - "5000:5000"
+  # App Service
+  flask-app:
+    build:
+      context: .
+      dockerfile: ./app/docker/Dockerfile
+    container_name: cbm_flask_app
+    environment:
+      - DB_HOST=cbm-mysql-db
+      - DB_PORT=3306
+      - DB_USER=cbmteam
+      - DB_PASSWORD=evolife
+      - DB_NAME=cbm_health_db
+    volumes:
+      - ./app:/app
+    depends_on:
+      - cbm-mysql-db
+    ports:
+      - "5050:5050"
+    networks:
+      - cbm_network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5050/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
