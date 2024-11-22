@@ -25,6 +25,7 @@ class GenomeCreator:
             print("Please pass in the correct path for the data to be read in from")
             print("You passed in:", path)
             raise FileNotFoundError
+        
         df = df.drop("Unnamed: 0", axis=1)
         cs = self.check_schema(df)
         if not cs:
@@ -42,13 +43,15 @@ class GenomeCreator:
                       'gender', 'bmi', 'TENSE/ANXIOUS', 'TIRED', 'GYM', 'HOME', 'OUTDOORS', 'day']
         
         cols = df.columns
-        print(cols)
-        if len(cols) != len(valid_cols):
-            return False
         
         for c in cols:
             if c not in valid_cols:
+                print("failed on", c)
                 return False
+            
+        if len(cols) != len(valid_cols):
+            print(cols)
+            return False
 
         return True
 
@@ -78,7 +81,7 @@ class GenomeCreator:
         for i, r in id_records.iterrows():
             tmp_g = Gene(id=r['id'], day=r['day'], nremhr = r['nremhr'], rmssd = r['rmssd'],
                          spo2 = r['spo2'], stress_score = r['stress_score'], sleep_points_percentage = r['sleep_points_percentage'],
-                         exertion_points_percentage = r['exertion_points_percentage'], responsiveness_points_percentage = r['responsivenss_points_percentage'],
+                         exertion_points_percentage = r['exertion_points_percentage'], responsiveness_points_percentage = r['responsiveness_points_percentage'],
                          distance = r['distance'], activityType = r['activityType'], bpm = r['bpm'], lightly_active_minutes = r['lightly_active_minutes'],
                          moderately_active_minutes = r['moderately_active_minutes'], very_active_minutes = r['very_active_minutes'],
                          sedentary_minutes = r['sedentary_minutes'], mindfulness_session = r['mindfulness_session'], sleep_duration = r['sleep_duration'],
@@ -92,7 +95,7 @@ class GenomeCreator:
         if self.determine_quality_individual(id=id, quality=0.3):
             id_records = self.df.loc[self.df['id'] == f'{id}']
             genes = self.create_genes_for_individual(id_records)
-            g = Genome(geneset=genes)
+            g = Genome(geneset=genes, id=id)
             return g
 
     def create_all_genomes(self):

@@ -21,7 +21,7 @@ class Gene:
 
     """
 
-    def __init__(self, id:int, day:int, nremhr:float, spo2:float, stress_score:float,
+    def __init__(self, id:int, day:int, nremhr:float, rmssd:float, spo2:float, stress_score:float,
                  sleep_points_percentage:float, exertion_points_percentage:float, 
                  responsiveness_points_percentage:float, distance:float, activityType:str,
                  bpm:float, lightly_active_minutes:float, moderately_active_minutes:float,
@@ -31,6 +31,7 @@ class Gene:
         self.id = id
         self.day = day
         self.nremhr = nremhr
+        self.rmssd = rmssd
         self.spo2 = spo2
         self.stress_score = stress_score
         self.sleep_points_percentage = sleep_points_percentage
