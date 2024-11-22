@@ -60,20 +60,28 @@ class GenomeCreator:
     def load_data_from_table(self):
         pass
 
-    def create_genes_for_individual(self, id):
-        pass
+    def create_genes_for_individual(self, id_records:pd.DataFrame):
+        id_records = id_records.sort_values(by='day')
+        geneset = []
+
+        for i, r in id_records.iterrows():
+            
+
+
+        
 
     def create_genome_for_individual(self, id):
-        
         id_records = self.df.loc[self.df['id'] == f'{id}']
-
-
-        pass
+        genes = self.create_genes_for_individual(id_records)
+        g = Genome(geneset=genes)
+        return g
 
     def create_all_genomes(self):
+        genomes = {}
         for id in self.ids:
             if self.determine_quality_individual(id=id, quality=0.3):
-                self.create_genome_for_individual(id=id)
+                g = self.create_genome_for_individual(id=id)
+                genomes['id'] = g
            
 
 
@@ -115,12 +123,6 @@ class GenomeCreator:
             return True
         else:
             return False
-
-
-
-
-
-
 
         
 
