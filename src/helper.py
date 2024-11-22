@@ -3,13 +3,6 @@ import pandas as pd
 import numpy as np
 """
     File of helper functions
-
-    was thinking:
-    - read in the data
-    - create instances of genes
-    - create instances of genomes
-    - evaluate more than one person
-    - data cleaning and handling
 """
 
 class GenomeCreator:
@@ -32,10 +25,11 @@ class GenomeCreator:
             print("Please pass in the correct path for the data to be read in from")
             print("You passed in:", path)
             raise FileNotFoundError
-        
-        if not self.check_schema(df):
+        df = df.drop("Unnamed: 0", axis=1)
+        cs = self.check_schema(df)
+        if not cs:
             raise Exception("please ensure the schema of the table is correct")
-        
+       
         self.num_columns = len(df.columns)
         self.df = df
         ids = list(df['id'].unique())
@@ -48,9 +42,10 @@ class GenomeCreator:
                       'gender', 'bmi', 'TENSE/ANXIOUS', 'TIRED', 'GYM', 'HOME', 'OUTDOORS', 'day']
         
         cols = df.columns
+        print(cols)
         if len(cols) != len(valid_cols):
             return False
-
+        
         for c in cols:
             if c not in valid_cols:
                 return False
@@ -61,20 +56,44 @@ class GenomeCreator:
         pass
 
     def create_genes_for_individual(self, id_records:pd.DataFrame):
+        """
+            Purpose: create a Gene for this individual's day
+
+            Input: dataframe of records for a specific ID
+
+            Output: a list of genes!
+
+            Fields for Gene model:
+                id day nremhr rmssd spo2 stress_score sleep_points_percentage 
+                exertion_points_percentage responsiveness_points_percentage 
+                distance activityType bpm lightly_active_minutes moderately_active_minutes 
+                very_active_minutes sedentary_minutes mindfulness_session sleep_duration 
+                minutesAsleep minutesAwake sleep_efficiency gender bmi TENSE/ANXIOUS TIRED 
+                GYM HOME OUTDOORS
+        """
+
         id_records = id_records.sort_values(by='day')
         geneset = []
 
         for i, r in id_records.iterrows():
+            tmp_g = Gene(id=r['id'], day=r['day'], nremhr = r['nremhr'], rmssd = r['rmssd'],
+                         spo2 = r['spo2'], stress_score = r['stress_score'], sleep_points_percentage = r['sleep_points_percentage'],
+                         exertion_points_percentage = r['exertion_points_percentage'], responsiveness_points_percentage = r['responsivenss_points_percentage'],
+                         distance = r['distance'], activityType = r['activityType'], bpm = r['bpm'], lightly_active_minutes = r['lightly_active_minutes'],
+                         moderately_active_minutes = r['moderately_active_minutes'], very_active_minutes = r['very_active_minutes'],
+                         sedentary_minutes = r['sedentary_minutes'], mindfulness_session = r['mindfulness_session'], sleep_duration = r['sleep_duration'],
+                         minutesAsleep = r['minutesAsleep'], minutesAwake = r['minutesAwake'], sleep_efficiency = r['sleep_efficiency'],
+                         gender = r['gender'], bmi = r['bmi'], tense = r['TENSE/ANXIOUS'], tired = r['TIRED'],
+                          gym = r['GYM'], home = r['HOME'], outdoors = r['OUTDOORS'])
             
-
-
-        
+            geneset.append(tmp_g)
 
     def create_genome_for_individual(self, id):
-        id_records = self.df.loc[self.df['id'] == f'{id}']
-        genes = self.create_genes_for_individual(id_records)
-        g = Genome(geneset=genes)
-        return g
+        if self.determine_quality_individual(id=id, quality=0.3):
+            id_records = self.df.loc[self.df['id'] == f'{id}']
+            genes = self.create_genes_for_individual(id_records)
+            g = Genome(geneset=genes)
+            return g
 
     def create_all_genomes(self):
         genomes = {}
