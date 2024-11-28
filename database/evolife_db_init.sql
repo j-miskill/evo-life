@@ -24,23 +24,15 @@ CREATE TABLE IF NOT EXISTS health_metrics (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
--- Encoded & Decoded Genotype Table
-CREATE TABLE IF NOT EXISTS genotypes (
+-- Encodings Table
+CREATE TABLE IF NOT EXISTS health_encodings (
     metric_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
-    decoded_genotype JSON, 
-    encoded_genotype JSON, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-
--- Encoded & Decoded Phenotype Table
-CREATE TABLE IF NOT EXISTS phenotypes (
-    id INT AUTO_INCREMENT PRIMARY KEY, 
-    user_id VARCHAR(36) NOT NULL, 
-    encoded_phenotype JSON, -- predicted by our model
-    decoded_phenotype JSON, -- decoded model prediction
+    encoded_genotypes JSON, 
+    encoded_phenotype JSON, 
     model_version INT, -- not sure if we care to track this
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+--- NOTE: WE MIGHT FIND IT BETTER TO COMBINE THE LAST 2 TABLES INTO 1
