@@ -103,7 +103,7 @@ services:
 
   # MySQL Database for App
   cbm-mysql-db:
-    image: mysql:latest
+    image: mysql:latest 
     container_name: cbm_app_db
     environment:
       MYSQL_ROOT_PASSWORD: evolife
@@ -116,6 +116,16 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/evolife_db_init.sql:/docker-entrypoint-initdb.d/evolife_db_init.sql
+      - ./prepped/database_daily.csv:/var/lib/mysql-files/database_daily.csv
+      - ./prepped/database_individuals.csv:/var/lib/mysql-files/database_individuals.csv
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - cbm_network
 
   # App Service
   flask-app:
@@ -132,7 +142,8 @@ services:
     volumes:
       - ./app:/app
     depends_on:
-      - cbm-mysql-db
+      cbm-mysql-db:
+        condition: service_healthy
     ports:
       - "5050:5050"
     networks:
@@ -144,4 +155,15 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    # entrypoint: /bin/bash
+    # command:
+    #   - -c
+    #   - | 
+    #     until mysql -h cbm_app_db -u"cbmteam" -p"evolife"; do \
+    #       echo "Waiting for MySQL to be ready..." \
+    #       sleep 5 \
+    #     done \
+    #     echo "MySQL is ready!" && \
+    #     python app.py
+
 

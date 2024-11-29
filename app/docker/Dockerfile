@@ -16,4 +16,4 @@ COPY app/docker/requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt
 
 # Start the app
-CMD ["python", "app/app.py"]
+CMD ["python", "app.py"]

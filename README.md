@@ -150,7 +150,7 @@ Run these commands from our project root:
 
 1. **Start all Docker services**:
     ```bash
-    docker-compose -f docker-compose.yaml up -d
+    docker-compose -f docker-compose.yaml up
     ```
     Starts all containers in detached mode.
 
