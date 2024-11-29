@@ -181,6 +181,7 @@ Run these commands from our project root:
 
 - Airflow Webserver: http://localhost:8080
     - Useful for viewing Training and Inference Pipelines and manually running them
+    - username: cbmteam, pw: evolife
 - App: http://localhost:5050
 - MySQL: `3306`
     - If we need direct access from tools like MySQL Workbench
