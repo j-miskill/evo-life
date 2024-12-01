@@ -1,6 +1,8 @@
 from models import Genome, Gene
 import pandas as pd
 import numpy as np
+import os
+
 """
     File of helper functions
 """
@@ -13,12 +15,19 @@ class GenomeCreator:
         self.num_columns = None
         self.ids = []
 
-    def load_data_from_csv(self, path):
+    def load_data_from_csv(self, path=None):
         """
             Input: string path to csv file
 
             Output: a dataframe instantiated from that csv file
         """
+        if not path:
+            current_script_path = os.path.abspath(__file__)
+            current_dir = os.path.dirname(current_script_path)
+            path = os.path.join(current_dir, '../prepped/daily.csv')
+            path = os.path.normpath(path)
+
+
         try:
             df = pd.read_csv(path)
         except FileNotFoundError:
