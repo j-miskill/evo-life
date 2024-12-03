@@ -1,4 +1,8 @@
 from datetime import datetime
+import tensorflow as tf
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
 class Gene:
@@ -82,8 +86,71 @@ class Genome:
         """
             perhaps here is where we could evaluate the genotype and calculate what the phenotype would look
             like, depending on what we deemed to be interesting enough for us to look at.
+
+            Currently uses genes to train the model and then predicts if a day will be tense or not
         """
-        pass
+        def preprocess_data(genes):
+            # Convert Gene objects to numerical data
+            features = []
+            labels = []
+            for gene in genes:
+                feature = [
+                    gene.nremhr,
+                    gene.rmssd,
+                    gene.spo2,
+                    gene.stress_score,
+                    gene.sleep_points_percentage,
+                    gene.exertion_points_percentage,
+                    gene.responsiveness_points_percentage,
+                    gene.distance,
+                    gene.bpm,
+                    gene.lightly_active_minutes,
+                    gene.moderately_active_minutes,
+                    gene.very_active_minutes,
+                    gene.sedentary_mintes,
+                    gene.mindfulness_session,
+                    gene.sleep_duration,
+                    gene.minutesAsleep,
+                    gene.minutesAwake,
+                    gene.sleep_efficiency,
+                    gene.gender,
+                    gene.bmi,
+                    gene.tired,
+                    gene.gym,
+                    gene.home,
+                    gene.outdoors
+                ]
+                features.append(feature)
+                labels.append(gene.tense)
+            
+            return np.array(features), np.array(labels)
+
+        # Example: Assuming `genes` is your list of Gene objects
+        genes = self.geneset
+        features, labels = preprocess_data(genes)
+
+        # Normalize the features
+        scaler = StandardScaler()
+        features = scaler.fit_transform(features)
+
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
+
+        # Build the neural network
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+            tf.keras.layers.Dense(32, activation='relu'),
+            tf.keras.layers.Dense(1, activation='sigmoid')
+        ])
+
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        # Train the model
+        model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+
+        # Evaluate the model
+        loss, accuracy = model.evaluate(X_test, y_test)
+        print(f"Test Accuracy: {accuracy:.2f}")
+
             
         
 
