@@ -88,6 +88,7 @@ class Genome:
             like, depending on what we deemed to be interesting enough for us to look at.
 
             Currently uses genes to train the model and then predicts if a day will be tense or not
+            Returns an array of days predicted tense
         """
         def preprocess_data(genes):
             # Convert Gene objects to numerical data
@@ -151,10 +152,13 @@ class Genome:
         loss, accuracy = model.evaluate(X_test, y_test)
         print(f"Test Accuracy: {accuracy:.2f}")
 
-            
-        
+        predictions = model.predict(features)
 
-    
+        # Interpret the predictions
+        # Since the model outputs probabilities for binary classification, round them to 0 or 1
+        predicted_tense = (predictions > 0.5).astype(int)  # 0.5 is the threshold
+
+        return predicted_tense
 
 
 

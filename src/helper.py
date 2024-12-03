@@ -99,6 +99,7 @@ class GenomeCreator:
                           gym = r['GYM'], home = r['HOME'], outdoors = r['OUTDOORS'])
             
             geneset.append(tmp_g)
+        return geneset
 
     def create_genome_for_individual(self, id):
         if self.determine_quality_individual(id=id, quality=0.3):
@@ -155,7 +156,7 @@ class GenomeCreator:
         else:
             return False
 
-        
+    
 
 
 class TableInteractor:
