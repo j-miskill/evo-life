@@ -112,6 +112,7 @@ class GenomeCreator:
             Purpose: determine whether or not an ID has enough quality data associated with it
 
             Input: a single ID
+                    proportion of columns that do have 0s
 
             Output: true or false
 
@@ -129,7 +130,7 @@ class GenomeCreator:
                          "responsiveness_points_percentage","distance", "bpm", "lightly_active_minutes", "moderately_active_minutes",
                          "very_active_minutes", "sedentary_minutes", "sleep_duration", 	"minutesAsleep", "minutesAwake",
                          "sleep_efficiency", "bmi"]
-        id_records = self.df.loc[self.df['id'] == "621e32e667b776a2406d2f1c"].reset_index()
+        id_records = self.df.loc[self.df['id'] == id].reset_index()
         total_cols = len(valid_columns)
         df_subset = id_records[["id", "date"] + valid_columns]
         total_num_records = df_subset['id'].count()
@@ -137,7 +138,7 @@ class GenomeCreator:
         total_zero_count = df_subset.apply(lambda row: (row == 0).sum(), axis=1)
         num_zeros_across_all_cols_for_id = total_zero_count.sum()
 
-        validity_pct =  num_zeros_across_all_cols_for_id / base
+        validity_pct =  num_zeros_across_all_cols_for_id / base # number of zeros divided by total number of cols
 
         # we want the percentage of zeros to be less than the quality check percentage
         # ie, if we want the number of 0s to be less than 60% of total cols

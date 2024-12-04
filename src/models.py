@@ -78,12 +78,38 @@ class Genome:
                 return self.geneset[day]
         print("Geneset does not include: ", day, ". Please request a valid day.")
 
-    def calculate_phenotype(self):
+    def calculate_genome_phenotype(self):
         """
-            perhaps here is where we could evaluate the genotype and calculate what the phenotype would look
-            like, depending on what we deemed to be interesting enough for us to look at.
+           entire collection of data we have on a person
+
+           --BMI
+           ANXIOUS
+           TIRED
+
+
+           % of days ANXIOUS == 1
+           % of days TIRED == 1
+           change in stress_score 
+           change in sleep_points_percentage
+
+
+           
         """
         pass
+
+    # def calculate_gene_phenotype(self):
+    #     """
+    #         Day to day phenotype calculation
+
+    #         ANXIOUS
+    #         TIRED
+
+    #         % of days that you were anxious
+    #         % of days that you were tired
+
+
+    #     """
+    #     pass
             
         
 
