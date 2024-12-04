@@ -120,7 +120,7 @@ class Genome:
 
         
         """
-        # Ensure the first value is greater than 0.0
+        # Ensure the first value is greater than 0.0\
         stress_score_begin = stress_score[0]
         while stress_score_begin <= 0.0:
             stress_score = stress_score[1:]
@@ -166,8 +166,8 @@ class Genome:
         
         return phenotype
 
-    def calculate_genome_phenotype_split(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, parts_split:list, prev_phenotype=None):
-        def split_into_parts(data, parts=12):
+    def calculate_genome_phenotype_split(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None):
+        def split_into_parts(data, parts=4):
             """
             Splits a list into the specified number of equal parts.
             If the list is not evenly divisible, some parts may differ slightly in size.
@@ -193,10 +193,37 @@ class Genome:
             
             return split_data
         
+        def split_into_parts_no_zeros(data, parts=4):
+            """
+            Splits a list into the specified number of equal parts.
+            If the list is not evenly divisible, some parts may differ slightly in size.
+            
+            Args:
+                data (list): The list to split.
+                parts (int): The number of parts to divide the list into.
+            
+            Returns:
+                list: A list of sublists.
+            """
+            # Calculate the approximate size of each part
+            data = [value for value in data if value != 0.0]
+            avg_length = len(data) / parts
+            split_data = []
+            last_index = 0
+            
+            for i in range(parts):
+                # Calculate the start and end indices for this part
+                start = last_index
+                end = round((i + 1) * avg_length)
+                split_data.append(data[start:end])
+                last_index = end
+            
+            return split_data
+        
         anxiety_split = split_into_parts(anxiety)
         tired_split = split_into_parts(tired)
-        stress_score_split = split_into_parts(stress_score)
-        sleep_point_percent_split = split_into_parts(sleep_point_percent)
+        stress_score_split = split_into_parts_no_zeros(stress_score)
+        sleep_point_percent_split = split_into_parts_no_zeros(sleep_point_percent)
 
         phenotype_scores = []
         for i in range(len(anxiety_split)):
