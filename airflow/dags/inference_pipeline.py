@@ -65,5 +65,5 @@ with DAG(
     )
 
     # Define the task dependencies
-    encode_gene_task >> upload_gene_task
+    encode_gene_task >> upload_gene_task >> display_results_task
     [load_trained_model_task, encode_gene_task] >> predict_phenotype_task >> decode_phenotype_task >> upload_phenotype_task >> display_results_task
