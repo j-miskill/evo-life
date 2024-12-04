@@ -1,6 +1,8 @@
 from models import Genome, Gene
 import pandas as pd
 import numpy as np
+import os
+
 """
     File of helper functions
 """
@@ -13,12 +15,19 @@ class GenomeCreator:
         self.num_columns = None
         self.ids = []
 
-    def load_data_from_csv(self, path):
+    def load_data_from_csv(self, path=None):
         """
             Input: string path to csv file
 
             Output: a dataframe instantiated from that csv file
         """
+        if not path:
+            current_script_path = os.path.abspath(__file__)
+            current_dir = os.path.dirname(current_script_path)
+            path = os.path.join(current_dir, '../prepped/daily.csv')
+            path = os.path.normpath(path)
+
+
         try:
             df = pd.read_csv(path)
         except FileNotFoundError:
@@ -90,6 +99,7 @@ class GenomeCreator:
                           gym = r['GYM'], home = r['HOME'], outdoors = r['OUTDOORS'])
             
             geneset.append(tmp_g)
+        return geneset
 
     def create_genome_for_individual(self, id):
         if self.determine_quality_individual(id=id, quality=0.3):
@@ -104,8 +114,23 @@ class GenomeCreator:
             if self.determine_quality_individual(id=id, quality=0.3):
                 g = self.create_genome_for_individual(id=id)
                 genomes['id'] = g
-           
 
+        return genomes
+
+    def get_data_for_individual_phenotype(self, id):
+        if self.determine_quality_individual(id=id, quality=0.3):
+            id_records = self.df.loc[self.df['id'] == f'{id}']
+            id_records = id_records.sort_values(by='day')
+            individual_data = {"anxiety": id_records["TENSE/ANXIOUS"].values, "tired": id_records["TIRED"].values, "stress_score": id_records["stress_score"].values, "sleep_points_percentage": id_records["sleep_points_percentage"].values}
+            return individual_data
+        
+    def get_all_phenotype_data(self):
+        data = {}
+        for id in self.ids:
+            if self.determine_quality_individual(id=id, quality=0.3):
+                p = self.get_data_for_individual_phenotype(id=id)
+                data[id] = p
+        return data
 
     def determine_quality_individual(self, id, quality: float):
         """
@@ -147,7 +172,7 @@ class GenomeCreator:
         else:
             return False
 
-        
+    
 
 
 class TableInteractor:

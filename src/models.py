@@ -1,4 +1,8 @@
 from datetime import datetime
+import tensorflow as tf
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
 class Gene:
@@ -78,7 +82,7 @@ class Genome:
                 return self.geneset[day]
         print("Geneset does not include: ", day, ". Please request a valid day.")
 
-    def calculate_genome_phenotype(self):
+    def calculate_genome_phenotype(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None, prev_phenotype_period=None):
         """
            entire collection of data we have on a person
 
@@ -117,7 +121,55 @@ class Genome:
 
            
         """
-        pass
+        # Ensure the first value is greater than 0.0
+        stress_score_begin = stress_score[0]
+        while stress_score_begin <= 0.0:
+            stress_score = stress_score[1:]
+            stress_score_begin = stress_score[0]
+
+        # Ensure the last value is greater than 0.0
+        stress_score_end = stress_score[-1]
+        while stress_score_end <= 0.0:
+            stress_score = stress_score[:-1]
+            stress_score_end = stress_score[-1]
+
+        # Ensure the first value is greater than 0.0
+        sleep_point_percent_begin = sleep_point_percent[0]
+        while sleep_point_percent_begin <= 0.0:
+            sleep_point_percent = sleep_point_percent[1:]
+            sleep_point_percent_begin = sleep_point_percent[0]
+
+        # Ensure the last value is greater than 0.0
+        sleep_point_percent_end = sleep_point_percent[-1]
+        while sleep_point_percent_end <= 0.0:
+            sleep_point_percent = sleep_point_percent[:-1]
+            sleep_point_percent_end = sleep_point_percent[-1]
+
+
+        stress_score_change = (stress_score_end - stress_score_begin) / stress_score_begin
+        sleep_point_change = (sleep_point_percent_end - sleep_point_percent_begin) / sleep_point_percent_begin
+        
+        anxiety_average = np.average(anxiety)
+        tired_average = np.average(tired)
+
+
+        # Normalize metrics
+        normalized_stress_score_change = (1 + stress_score_change) / 2  # Ensures values are between 0 and 1
+        normalized_sleep_point_change = (sleep_point_change + 1) / 2   # Ensures values are between 0 and 1
+        normalized_anxiety = 1 - anxiety_average  # Invert because low anxiety is good
+        normalized_tired = 1 - tired_average      # Invert because low tiredness is good
+
+        # Combine into phenotype score
+        phenotype = (normalized_stress_score_change +
+                    normalized_sleep_point_change +
+                    normalized_anxiety +
+                    normalized_tired) / 4
+        
+        return phenotype
+
+        
+
+
 
     # def calculate_gene_phenotype(self):
     #     """
