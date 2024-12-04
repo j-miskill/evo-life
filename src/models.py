@@ -87,10 +87,32 @@ class Genome:
            TIRED
 
 
+           (
            % of days ANXIOUS == 1
            % of days TIRED == 1
            change in stress_score 
-           change in sleep_points_percentage
+           change in sleep_points_percentage )
+           |
+           |
+           BB
+           |
+           |
+           *
+           one continuous value
+
+           phenotype: (0,1) for one ID for the data we have now
+                        1 good
+                        0 bad
+
+           |
+           |
+           |
+           |
+           *
+
+           say we add another month of data for an ID
+
+           then, we recalculate the phenotype
 
 
            
