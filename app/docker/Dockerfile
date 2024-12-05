@@ -8,12 +8,19 @@ RUN apt-get update && apt-get install -y \
 
 
 # Set working directory
-COPY ./app /app
 WORKDIR /app
+COPY ./app /app
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --upgrade pip
 
 # Copy requirements and install
 COPY app/docker/requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt
 
+EXPOSE 5050
+
 # Start the app
-CMD ["python", "app/app.py"]
+CMD ["python", "app.py"]

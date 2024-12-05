@@ -150,7 +150,7 @@ Run these commands from our project root:
 
 1. **Start all Docker services**:
     ```bash
-    docker-compose -f docker-compose.yaml up -d
+    docker-compose -f docker-compose.yaml up
     ```
     Starts all containers in detached mode.
 
@@ -181,6 +181,7 @@ Run these commands from our project root:
 
 - Airflow Webserver: http://localhost:8080
     - Useful for viewing Training and Inference Pipelines and manually running them
+    - username: cbmteam, pw: evolife
 - App: http://localhost:5050
 - MySQL: `3306`
     - If we need direct access from tools like MySQL Workbench
