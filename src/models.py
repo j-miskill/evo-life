@@ -208,32 +208,3 @@ class Genome:
                     normalized_tired) / 4
         
         return phenotype
-
-        
-
-
-
-    # def calculate_gene_phenotype(self):
-    #     """
-    #         Day to day phenotype calculation
-
-    #         ANXIOUS
-    #         TIRED
-
-    #         % of days that you were anxious
-    #         % of days that you were tired
-
-
-    #     """
-    #     pass
-            
-        
-
-    
-
-
-
-
-
-
-    

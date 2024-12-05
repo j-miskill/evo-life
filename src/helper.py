@@ -191,18 +191,3 @@ class GenomeCreator:
         else:
             return False
 
-    
-
-
-class TableInteractor:
-
-    def __init__(self):
-        pass
-
-    def read_to_table(self):
-        pass
-
-    def write_to_table(self):
-        pass
-
-
