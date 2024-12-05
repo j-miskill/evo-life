@@ -1,10 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>EVOLIFE</title>
+    <title>EVO-LIFE</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/gene_logo.png" alt="Gene Logo" class="logo">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-   <h1>Hopefully this CBM UI will be something Beautiful</h1>
+    <div class="background"></div>
+    <header>
+        <h1>Welcome to EVO-LIFE!</h1>
+    </header>
+
+    <!-- User and Date Selection Section -->
+    <div class="user-row">
+        <h2>User</h2>
+        <form id="userForm">
+            <label for="user_id">Please choose your User ID:</label>
+            <select id="user_id" name="user_id">
+                <option value="" selected disabled>Select a User</option>
+                {% for user in users %}
+                <option id="dropdown" value="{{ user.user_id }}">{{ user.user_id }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <form id="dateForm">
+            <label for="metric_date">Please choose a date:</label>
+            <select id="metric_date" name="metric_date">
+                <option value="" selected disabled>Select a date</option>
+                {% for metric_date in metric_dates %}
+                <option id="dropdown" value="{{ metric_date.date }}">{{ metric_date.date }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <p id="welcome-message"></p>
+    </div>
+
+    <div>
+        <!-- Container for historical sections -->
+        <div class="data-row">
+            <div class="column">
+                <h2>Your Health Metrics</h2>
+                <div class="table-container">
+                    <table id="health-metrics-table">
+                        <thead>
+                            <tr>
+                                <th>NREMHR</th>
+                                <th>RMSSD</th>
+                                <th>spo2</th>
+                                <th>exertion_points_%</th>
+                                <th>responsiveness_points_%</th>
+                                <th>distance</th>
+                                <th>activityType</th>
+                                <th>bpm</th>
+                                <th>lightly_active_mins</th>
+                                <th>moderately_active_mins</th>
+                                <th>very_active_mins</th>
+                                <th>sedentary_mins</th>
+                                <th>mindfulness_session</th>
+                                <th>sleep_duration</th>
+                                <th>minutesAsleep</th>
+                                <th>minutesAwake</th>
+                                <th>sleep_efficiency</th>
+                                <th>gender</th>
+                                <th>bmi</th>
+                                <th>gym</th>
+                                <th>home</th>
+                                <th>outdoors</th>
+        
+                                <th>stress_score</th>
+                                <th>sleep_points_%</th>
+                                <th>tense_anxious</th>
+                                <th>tired</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Automatically populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="column">
+                <h2>Your Health Genes</h2>
+                <div id="gene-visualization"></div>
+
+                
+            </div>
+        </div>
+
+        <!-- Container for new sections -->
+        <div class="data-row">
+            <div class="column">
+                <h2>New Health Metrics</h2>
+                <a href="/add">Add New Metrics</a>
+            </div>
+            <div class="column">
+                <h2>Build a new gene</h2>
+                
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/scripts/main.js"></script>
+
 </body>
 </html>
