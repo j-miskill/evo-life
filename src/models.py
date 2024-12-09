@@ -1,5 +1,6 @@
 from datetime import datetime
 import numpy as np
+from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -80,6 +81,45 @@ class Genome:
             if g.day == day:
                 return self.geneset[day]
         print("Geneset does not include: ", day, ". Please request a valid day.")
+
+    def create_encoding(self):
+        """
+           1. take all fields and create a binary string 0101010101010101010100101010101110010101010101 
+           2. real value numbers [] 
+
+           sklearn.preprocessing for string mapping
+           ordinal encoder, label encoder
+
+        """
+        le = LabelEncoder()
+
+        gene_attributes = [a for a in vars(self) if not a.startswith("__")]
+
+        g_to_list = []
+
+        for ga in gene_attributes:
+            if ga == "id" or ga == "create_encoding" or ga == "activityType":
+                continue
+            else:
+                value = self.__getattribute__(ga)
+                if ga == "bmi":
+                    value = value.replace(">", "")
+                    value = value.replace(">=", "")
+                if ga == "gender":
+                    if value == "MALE":
+                        value = 1
+                    else:
+                        value = 0
+                if type(value) == str and not value.isnumeric():
+                    continue
+
+                if type(value) == str or type(value) == int or type(value) == float:
+                
+                    g_to_list.append(int(value))
+
+        le.fit(g_to_list)
+        encoding = le.transform(g_to_list)
+        return encoding
 
     def calculate_genome_phenotype(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None, prev_phenotype_period=None):
         """
