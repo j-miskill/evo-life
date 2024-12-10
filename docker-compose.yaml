@@ -119,7 +119,7 @@ services:
       - ./prepped/database_daily.csv:/var/lib/mysql-files/database_daily.csv
       - ./prepped/database_individuals.csv:/var/lib/mysql-files/database_individuals.csv
       - ./prepped/encodings.csv:/var/lib/mysql-files/encodings.csv
-      - ./prepped/phenotype_data.csv:/var/lib/mysql-files/phenotype_data.csv
+      - ./prepped/database_phenotype_data.csv:/var/lib/mysql-files/database_phenotype_data.csv
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
       interval: 10s

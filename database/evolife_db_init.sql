@@ -185,20 +185,18 @@ IGNORE 1 ROWS
 CREATE TABLE IF NOT EXISTS phenotype_data (
     pheno_id INT PRIMARY KEY,
     user_id VARCHAR(30),
-    month_1 FLOAT,
-    month_2 FLOAT,
-    month_3 FLOAT,
-    month_4 FLOAT
+    month INT,
+    phenotype_score FLOAT
 ) ENGINE=InnoDB;
 
-LOAD DATA INFILE '/var/lib/mysql-files/phenotype_data.csv'
+LOAD DATA INFILE '/var/lib/mysql-files/database_phenotype_data.csv'
 INTO TABLE phenotype_data
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (
-    pheno_id, user_id, month_1, month_2, month_3, month_4
+    pheno_id, user_id, month, phenotype_score
 );
 
 -- END PHENOTYPE TABLE
