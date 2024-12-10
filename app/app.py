@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import mysql.connector
-from trigger_pipeline import trigger_inference
+# from trigger_pipeline import trigger_inference
 from db_connector import get_db_connection
 import os
 
@@ -16,33 +16,47 @@ DB_NAME = os.environ.get("DB_NAME", "database")
 def index():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM health_metrics")
-    health_metrics = cursor.fetchall()
-    cursor.execute("SELECT DISTINCT user_id FROM health_metrics")
-    users = cursor.fetchall()
-    cursor.execute("SELECT DISTINCT date FROM health_metrics")
-    metric_dates = cursor.fetchall()
-    conn.close()
-    return render_template("index.html", health_metrics=health_metrics, users=users, metric_dates=metric_dates)
 
-@app.route("/get_metrics/<user_id>/<metric_date>")
-def get_metrics(user_id, metric_date):
+    cursor.execute("SELECT DISTINCT user_id FROM phenotype_data")
+    users = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM health_metrics WHERE user_id IN (SELECT DISTINCT user_id FROM phenotype_data)")
+    health_metrics = cursor.fetchall()
+    
+    cursor.execute("SELECT DISTINCT month(date) AS month FROM health_metrics WHERE user_id IN (SELECT DISTINCT user_id FROM phenotype_data)")
+    months = cursor.fetchall()
+    
+    conn.close()
+    return render_template("index.html", health_metrics=health_metrics, users=users, months=months)
+
+@app.route("/get_metrics/<user_id>/<month>")
+def get_metrics(user_id, month):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM health_metrics WHERE user_id = %s AND date = %s", (user_id, metric_date))
+    cursor.execute("SELECT * FROM health_metrics WHERE user_id = %s AND month(date) = %s", (user_id, month))
     health_metrics = cursor.fetchall()
     conn.close()
     return jsonify(health_metrics)
 
 
-@app.route("/get_encodings/<user_id>/<metric_date>")
-def get_encodings(user_id, metric_date):
+@app.route("/get_encodings/<user_id>/<month>")
+def get_encodings(user_id, month):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM encoded_health_metrics WHERE user_id = %s AND date = %s", (user_id, metric_date))
+    cursor.execute("SELECT encoding FROM encoded_health_metrics WHERE (user_id = %s AND day IN (SELECT day FROM health_metrics WHERE month(date) = %s))", (user_id, month))
     health_encodings = cursor.fetchall()
     conn.close()
     return jsonify(health_encodings)
+
+
+# @app.route("/get_phenotype/<user_id>/<month>")
+# def get_encodings(user_id, month):
+#     conn = get_db_connection()
+#     cursor = conn.cursor(dictionary=True)
+#     cursor.execute("SELECT encoding FROM encoded_health_metrics WHERE (user_id = %s AND day IN (SELECT day FROM health_metrics WHERE month(date) = %s))", (user_id, month))
+#     health_encodings = cursor.fetchall()
+#     conn.close()
+#     return jsonify(health_encodings)
 
 # @app.route("/visualize", methods=["GET"])
 # def visualize():

@@ -24,11 +24,11 @@
             </select>
         </form>
         <form id="dateForm">
-            <label for="metric_date">Please choose a date:</label>
-            <select id="metric_date" name="metric_date">
-                <option value="" selected disabled>Select a date</option>
-                {% for metric_date in metric_dates %}
-                <option id="dropdown" value="{{ metric_date.date }}">{{ metric_date.date }}</option>
+            <label for="month">Please choose a month:</label>
+            <select id="month" name="month">
+                <option value="" selected disabled>Select a month</option>
+                {% for month in months %}
+                <option id="dropdown" value="{{ month.month }}">{{ month.month }}</option>
                 {% endfor %}
             </select>
         </form>
@@ -44,6 +44,7 @@
                     <table id="health-metrics-table">
                         <thead>
                             <tr>
+                                <th>Date</th>
                                 <th>NREMHR</th>
                                 <th>RMSSD</th>
                                 <th>spo2</th>
@@ -81,9 +82,11 @@
                 </div>
             </div>
             <div class="column">
-                <h2>Your Health Genes</h2>
+                <h2>Your Health Genome</h2>
                 <div id="gene-visualization"></div>
-
+                <div id="phenotype-visualization">
+                    <p>0.864</p>
+                </div>
                 
             </div>
         </div>
@@ -95,7 +98,7 @@
                 <a href="/add">Add New Metrics</a>
             </div>
             <div class="column">
-                <h2>Build a new gene</h2>
+                <h2>Your new Gene</h2>
                 
             </div>
         </div>
