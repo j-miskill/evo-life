@@ -20,15 +20,15 @@ class GenotypeModel(nn.Module):
     def __init__(self, input_size, output_size):
         super(GenotypeModel, self).__init__()
         self.fc = nn.Sequential(
-            nn.Linear(input_size, 256),  # Input layer
+            nn.Linear(input_size, 128),  # Input layer
             nn.ReLU(),                  # Activation function
-            nn.Dropout(0.2),  # Dropout layer
+            # nn.Dropout(0.1),  # Dropout layer
 
-            nn.Linear(256, 128),         # Hidden layer
+            nn.Linear(128, 32),         # Hidden layer
             nn.ReLU(),
-            nn.Dropout(0.2),  # Dropout layer
+            # nn.Dropout(0.1),  # Dropout layer
 
-            nn.Linear(128, output_size)  # Output layer
+            nn.Linear(32, output_size)  # Output layer
         )
 
     def forward(self, x):
