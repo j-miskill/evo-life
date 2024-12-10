@@ -125,13 +125,15 @@ class GenomeCreator:
             encoding_id | user_id | day | encoding
         """
         final_df = pd.DataFrame()
+        encoding_id=1
         for id, genome in self.genomes.items():
             for d in range(0, len(genome.geneset)):
-                tmp_dict = {"encoding_id": d+1,
+                tmp_dict = {"encoding_id": [encoding_id],
                             "user_id": [id], 
                             "day":[d],
                             "encoding": [str(genome.geneset[d])]}
                 new_row = pd.DataFrame(tmp_dict)
+                encoding_id += 1
 
                 final_df = pd.concat([final_df, new_row])
                 
