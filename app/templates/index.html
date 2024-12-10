@@ -78,14 +78,8 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <a href="#" class="nav-link px-3 active">
-                                <span class="me-2">
-                                    <i class="bi bi-wrench-adjustable-circle"></i>
-                                </span>
                                 <span class="fw-bold">Filters</span>
                             </a>
-                        </li>
-                        <li class="my-4">
-                            <hr class="dropdown-divider">
                         </li>
                         <li>
                             <div class="text-muted small fw-bold text-uppercase px-3">MONTH</div>
@@ -103,6 +97,36 @@
                                 </form>
                             </a>
                         </li>
+                        <li>
+                            <li class="my-4">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <a href="#" class="nav-link px-3 active">
+                                <span class="fw-bold">Menu</span>
+                            </a>
+                            <li>
+                                <a href="#health-metrics" class="text-muted small fw-bold text-uppercase px-3">Health Metrics</a>
+                            </li>
+                            <li>
+                                <a href="#gene-visualization" class="text-muted small fw-bold text-uppercase px-3">Genotype</a>
+                            </li>
+                            <li>
+                                <a href="#phenotype-visualization" class="text-muted small fw-bold text-uppercase px-3">Phenotype</a>
+                            </li>
+                            <li>
+                                <a href="#health-trends" class="text-muted small fw-bold text-uppercase px-3">Health Trends</a>
+                            </li>
+                            <li>
+                                <a href="#new-health-metrics" class="text-muted small fw-bold text-uppercase px-3">Enter New Metrics</a>
+                            </li>
+                            <li>
+                                <a href="#new-gene-visualization" class="text-muted small fw-bold text-uppercase px-3">New Genotype</a>
+                            </li>
+                            <li>
+                                <a href="#new-phenotype-visualization" class="text-muted small fw-bold text-uppercase px-3">New Phenotype</a>
+                            </li>
+                        </li>
+
                         <li class="my-4">
                             <hr class="dropdown-divider">
                         </li>
@@ -141,7 +165,7 @@
                             <div class="card-header">
                                 Your Health Metrics
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" id="health-metrics">
                                 <div class="table-responsive">
                                     <table id="health-metrics-table" class="table data-table" style="width:100%">
                                         <thead>
@@ -223,7 +247,7 @@
                     <div class="col-md-6">
                         <div class="card-chart">
                         <div class="card-header">Test New Metrics</div>
-                        <div class="card-body">
+                        <div class="card-body" id="new-health-metrics">
                             
                         </div>
                         </div>
@@ -237,7 +261,7 @@
                     <div class="col-md-6">
                         <div class="card-chart">
                             <div class="card-header">New Genotype</div>
-                            <div class="card-body">
+                            <div class="card-body" id="new-gene-visualization">
                                 
                             </div>
                         </div>
@@ -246,7 +270,7 @@
                     <div class="col-md-6">
                         <div class="card-chart">
                             <div class="card-header">New Phenotype</div>
-                            <div class="card-body">
+                            <div class="card-body" id="new-phenotype-visualization">
                                 
                             </div>
                         </div>
