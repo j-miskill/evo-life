@@ -20,11 +20,15 @@ class GenotypeModel(nn.Module):
     def __init__(self, input_size, output_size):
         super(GenotypeModel, self).__init__()
         self.fc = nn.Sequential(
-            nn.Linear(input_size, 128),  # Input layer
+            nn.Linear(input_size, 256),  # Input layer
             nn.ReLU(),                  # Activation function
-            nn.Linear(128, 64),         # Hidden layer
+            nn.Dropout(0.2),  # Dropout layer
+
+            nn.Linear(256, 128),         # Hidden layer
             nn.ReLU(),
-            nn.Linear(64, output_size)  # Output layer
+            nn.Dropout(0.2),  # Dropout layer
+
+            nn.Linear(128, output_size)  # Output layer
         )
 
     def forward(self, x):
@@ -33,8 +37,9 @@ class GenotypeModel(nn.Module):
 class FitnessFunction:
     def __init__(self):
         self.model = None
+        self.best_mean_val_loss = None  # Track the best mean validation loss
 
-    def train_with_cross_validation(genotypes, phenotypes, is_classification=False):
+    def train_with_cross_validation(self, genotypes, phenotypes, is_classification=False):
         # Hyperparameters
         learning_rate = 0.01
         epochs = 20
@@ -42,11 +47,14 @@ class FitnessFunction:
         k_folds = 10
 
         # Dataset and KFold Splitter
-        dataset = GenotypePhenotypeDataset(genotypes, phenotypes) 
+        dataset = GenotypePhenotypeDataset(genotypes, phenotypes)
         kfold = KFold(n_splits=k_folds, shuffle=True, random_state=42)
 
         # Cross-validation results
         fold_results = []
+        accuracy_results = []
+        best_model = None
+        best_mean_val_loss = float('inf')
 
         for fold, (train_ids, val_ids) in enumerate(kfold.split(dataset)):
             print(f"--- Fold {fold + 1}/{k_folds} ---")
@@ -85,19 +93,37 @@ class FitnessFunction:
             # Validation Loop
             model.eval()
             val_loss = 0.0
+            correct = 0
+            total = 0
             with torch.no_grad():
                 for inputs, targets in val_loader:
                     outputs = model(inputs)
                     if is_classification:
                         targets = targets.long()
+                        _, predicted = torch.max(outputs, 1)  # Get predicted class
+                        correct += (predicted == targets).sum().item()
+                        total += targets.size(0)
                     loss = criterion(outputs.squeeze(), targets)
                     val_loss += loss.item()
 
             val_loss /= len(val_loader)
-            print(f"Fold {fold + 1}, Validation Loss: {val_loss:.4f}")
             fold_results.append(val_loss)
 
-        # Report Cross-Validation Results
-        print("\nCross-Validation Results:")
-        print(f"Mean Validation Loss: {np.mean(fold_results):.4f}")
-        print(f"Standard Deviation: {np.std(fold_results):.4f}")
+            if is_classification:
+                fold_accuracy = correct / total
+                accuracy_results.append(fold_accuracy)
+                print(f"Fold {fold + 1}, Accuracy: {fold_accuracy:.4f}")
+
+            print(f"Fold {fold + 1}, Validation Loss: {val_loss:.4f}")
+
+        # Calculate the mean validation loss across all folds
+        mean_val_loss = np.mean(fold_results)
+        print(f"Mean Validation Loss: {mean_val_loss:.4f}")
+
+        # Save the best model based on mean validation loss
+        if mean_val_loss < best_mean_val_loss:
+            best_mean_val_loss = mean_val_loss
+            self.model = model  # Save the last model trained in this cross-validation run
+
+        self.best_mean_val_loss = best_mean_val_loss  # Store the best mean validation loss
+        return best_mean_val_loss
