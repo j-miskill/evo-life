@@ -1,4 +1,6 @@
 
+//HEALTH METRIC LOGIC
+
 // Automatically populating health metrics
 document.addEventListener("DOMContentLoaded", function () {
     const dropdownUserId = document.getElementById("user_id");
@@ -100,8 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
+// GENOTYPE LOGIC
 
 function createAnimatedGeneStrands(encodings) {
     const geneVisualization = document.getElementById('gene-visualization');
@@ -216,5 +217,160 @@ document.addEventListener("DOMContentLoaded", function () {
         const userId = dropdownUserId.value;
         const month = dropdownMetricDate.value;
         if (userId && month) fetchEncodings(userId, month);
+    });
+});
+
+
+// PHENOTYPE LOGIC
+
+// Automatically populating phenotype score
+document.addEventListener("DOMContentLoaded", function () {
+    const dropdownUserId = document.getElementById("user_id");
+    const dropdownMetricDate = document.getElementById("month");  
+    const phenotypeVisualization = document.getElementById("phenotype-visualization");
+
+    function fetchPhenotype(user_id, month) {
+        fetch(`/get_phenotypes/${user_id}/${month}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const phenotypeScore = parseFloat(data[0].phenotype_score);
+                    phenotypeVisualization.innerHTML = `<h2>${phenotypeScore.toFixed(2)}</h2>`;
+
+                    // Normalize the score to map to the red-green scale
+                    const normalizedScore = Math.max(0, Math.min((phenotypeScore - 0.45) / 0.4, 1)); // Scale 0.6 to 1.0 to 0-1
+                    const red = Math.round(255 * (1 - normalizedScore)); // More red for lower normalized scores
+                    const green = Math.round(255 * normalizedScore);    // More green for higher normalized scores
+
+                    phenotypeVisualization.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+                    phenotypeVisualization.style.color = phenotypeScore > 0.5 ? "black" : "white"; // Adjust text color for contrast
+                } else {
+                    phenotypeVisualization.innerHTML = `<h3>No phenotype score available for the selected user and month.</h3>`;
+                    phenotypeVisualization.style.backgroundColor = "transparent"; // Reset to default
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching phenotype score:", error);
+                phenotypeVisualization.innerHTML = `<h3>Failed to fetch phenotype score.</h3>`;
+                phenotypeVisualization.style.backgroundColor = "transparent"; // Reset to default
+            });
+    }
+
+    // Add event listeners for user_id and month dropdowns
+    dropdownUserId.addEventListener("change", function () {
+        const selectedUserId = dropdownUserId.value;
+        const selectedMetricDate = dropdownMetricDate.value;
+
+        if (selectedUserId && selectedMetricDate) {
+            fetchPhenotype(selectedUserId, selectedMetricDate);
+        } else {
+            phenotypeVisualization.innerHTML = "";
+        }
+    });
+
+    dropdownMetricDate.addEventListener("change", function () {
+        const selectedUserId = dropdownUserId.value;
+        const selectedMetricDate = dropdownMetricDate.value;
+
+        if (selectedUserId && selectedMetricDate) {
+            fetchPhenotype(selectedUserId, selectedMetricDate);
+        } else {
+            phenotypeVisualization.innerHTML = "";
+        }
+    });
+});
+
+
+
+// HEALTH TRENDS
+
+document.addEventListener("DOMContentLoaded", function () {
+    const dropdownUserId = document.getElementById("user_id");
+    if (!dropdownUserId) {
+        console.error("Dropdown element with ID 'user_id' not found.");
+        return;
+    }
+
+    let healthChart;
+
+    function fetchHealthMetrics(userId) {
+        fetch(`/get_metric_trends/${userId}`)
+            .then(response => response.json())
+            .then(healthData => {
+                const labels = healthData.map(item => item.date);
+                const sleep_efficiency = healthData.map(item => item.sleep_efficiency);
+                const distance = healthData.map(item => item.distance/100);
+                const bpm = healthData.map(item => item.bpm);
+                const sedentary_minutes = healthData.map(item => item.sedentary_minutes/10);
+                const total_active = healthData.map(item => (item.lightly_active_minutes + item.moderately_active_minutes + item.very_active_minutes)/10);
+
+                updateChart(labels, [
+                    {
+                        label: 'Sleep Efficiency',
+                        data: sleep_efficiency,
+                        borderColor: 'blue',
+                        fill: false,
+                    },
+                    {
+                        label: 'Distance/100',
+                        data: distance,
+                        borderColor: 'green',
+                        fill: false,
+                    },
+                    {
+                        label: 'Heart Rate',
+                        data: bpm,
+                        borderColor: 'red',
+                        fill: false,
+                    },
+                    {
+                        label: 'Sedentary Mins/10',
+                        data: sedentary_minutes,
+                        borderColor: 'yellow',
+                        fill: false,
+                    },
+                    {
+                        label: 'Active Mins/10',
+                        data: total_active,
+                        borderColor: 'purple',
+                        fill: false,
+                    },
+                ]);
+            })
+            .catch(error => console.error('Error fetching health metrics:', error));
+    }
+
+    function updateChart(labels, datasets) {
+        if (healthChart) {
+            healthChart.destroy(); // Clear the previous chart
+        }
+
+        const ctx = document.getElementById('health-trends-chart').getContext('2d');
+        healthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Date' },
+                    },
+                    y: {
+                        title: { display: true, text: 'Values' },
+                    },
+                },
+            },
+        });
+    }
+
+    // Initial fetch for the default user
+    fetchHealthMetrics(dropdownUserId.value);
+
+    // Update on user selection change
+    dropdownUserId.addEventListener("change", () => {
+        fetchHealthMetrics(dropdownUserId.value);
     });
 });

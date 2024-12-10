@@ -48,24 +48,35 @@ def get_encodings(user_id, month):
     conn.close()
     return jsonify(health_encodings)
 
+@app.route("/get_phenotypes/<user_id>/<month>")
+def get_phenotype(user_id, month):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT phenotype_score FROM phenotype_data WHERE (user_id = %s AND month = %s)", (user_id, month))
+    phenotype_score = cursor.fetchone()
+    conn.close()
+    return jsonify([phenotype_score] if phenotype_score else [])
 
-# @app.route("/get_phenotype/<user_id>/<month>")
-# def get_encodings(user_id, month):
-#     conn = get_db_connection()
-#     cursor = conn.cursor(dictionary=True)
-#     cursor.execute("SELECT encoding FROM encoded_health_metrics WHERE (user_id = %s AND day IN (SELECT day FROM health_metrics WHERE month(date) = %s))", (user_id, month))
-#     health_encodings = cursor.fetchall()
-#     conn.close()
-#     return jsonify(health_encodings)
+@app.route("/get_metric_trends/<user_id>")
+def get_metric_trends(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Fetch data for the last three months
+    query = """
+        SELECT * 
+        FROM health_metrics 
+        WHERE user_id = %s
+            AND date >= DATE_SUB((SELECT MAX(date) FROM health_metrics 
+                                WHERE user_id = %s), INTERVAL 2 MONTH)
+        ORDER BY date ASC;
 
-# @app.route("/visualize", methods=["GET"])
-# def visualize():
-#     conn = get_db_connection()
-#     cursor = conn.cursor(dictionary=True)
-#     cursor.execute("SELECT * FROM encoded_health_metrics")
-#     data = cursor.fetchall()
-#     conn.close()
-#     return jsonify(data)
+    """
+    cursor.execute(query, (user_id, user_id))
+    health_metric_trends = cursor.fetchall()
+    conn.close()
+    
+    return jsonify(health_metric_trends)
 
 
 if __name__ == "__main__":
