@@ -127,3 +127,28 @@ class FitnessFunction:
 
         self.best_mean_val_loss = best_mean_val_loss  # Store the best mean validation loss
         return best_mean_val_loss
+
+    def predict(self, genotypes):
+        """
+        Predict phenotypes based on the input genotypes.
+        
+        Args:
+            genotypes (numpy.ndarray or torch.Tensor): Input genotypes to predict for.
+
+        Returns:
+            numpy.ndarray: Predicted phenotypes.
+        """
+        if self.model is None:
+            raise ValueError("The model has not been trained yet. Please train the model before making predictions.")
+
+        # Ensure input is a tensor
+        if isinstance(genotypes, np.ndarray):
+            genotypes = torch.tensor(genotypes, dtype=torch.float32)
+
+        # Put the model in evaluation mode
+        self.model.eval()
+        with torch.no_grad():
+            predictions = self.model(genotypes)
+
+        # Return predictions as a numpy array
+        return predictions.numpy()
