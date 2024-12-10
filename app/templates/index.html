@@ -1,112 +1,279 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>EVO-LIFE</title>
-    <link rel="icon" type="image/x-icon" href="/static/images/gene_logo.png" alt="Gene Logo" class="logo">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <div class="background"></div>
-    <header>
-        <h1>Welcome to EVO-LIFE!</h1>
-    </header>
+<html lang="en">
+    <head>
 
-    <!-- User and Date Selection Section -->
-    <div class="user-row">
-        <h2>User</h2>
-        <form id="userForm">
-            <label for="user_id">Please choose your User ID:</label>
-            <select id="user_id" name="user_id">
-                <option value="" selected disabled>Select a User</option>
-                {% for user in users %}
-                <option id="dropdown" value="{{ user.user_id }}">{{ user.user_id }}</option>
-                {% endfor %}
-            </select>
-        </form>
-        <form id="dateForm">
-            <label for="month">Please choose a month:</label>
-            <select id="month" name="month">
-                <option value="" selected disabled>Select a month</option>
-                {% for month in months %}
-                <option id="dropdown" value="{{ month.month }}">{{ month.month }}</option>
-                {% endfor %}
-            </select>
-        </form>
-        <p id="welcome-message"></p>
-    </div>
+        <title>EVOLIFE</title>
+        <link rel="canonical" href="https://blog.appseed.us/bootstrap-for-beginners-with-examples/" />
+        <link rel="icon" type="image/x-icon" href="/static/images/gene_logo.png" alt="Gene Logo" class="logo">
 
-    <div>
-        <!-- Container for historical sections -->
-        <div class="data-row">
-            <div class="column">
-                <h2>Your Health Metrics</h2>
-                <div class="table-container">
-                    <table id="health-metrics-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>NREMHR</th>
-                                <th>RMSSD</th>
-                                <th>spo2</th>
-                                <th>exertion_points_%</th>
-                                <th>responsiveness_points_%</th>
-                                <th>distance</th>
-                                <th>activityType</th>
-                                <th>bpm</th>
-                                <th>lightly_active_mins</th>
-                                <th>moderately_active_mins</th>
-                                <th>very_active_mins</th>
-                                <th>sedentary_mins</th>
-                                <th>mindfulness_session</th>
-                                <th>sleep_duration</th>
-                                <th>minutesAsleep</th>
-                                <th>minutesAwake</th>
-                                <th>sleep_efficiency</th>
-                                <th>gender</th>
-                                <th>bmi</th>
-                                <th>gym</th>
-                                <th>home</th>
-                                <th>outdoors</th>
-        
-                                <th>stress_score</th>
-                                <th>sleep_points_%</th>
-                                <th>tense_anxious</th>
-                                <th>tired</th>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <!-- Bootstrap CSS End -->
+        <!-- Main CSS -->
+        <link rel="stylesheet" href="/static/style.css">
+        <!-- Main CSS End -->
+        <!-- Bootstrap Icons Start -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+        <!-- Bootstrap Icons End -->
+        <link rel="stylesheet" href="/css/dark-mode.css">
+
+    </head>
+
+    <body>
+
+        <div class="background"></div>
+
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <!-- Sidebar Trigger Start -->
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas"><span class="navbar-toggler-icon"></span></button>
+            <!-- Sidebar Trigger End -->
+            <a class="navbar-brand fw-bold me-auto" href="#">EVOLIFE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="d-flex ms-auto">
+                    <div class="input-group my-3 my-lg-0">
+                        <form id="userForm">
+                            <select class="form-control" id="user_id" name="user_id">
+                                <option value="" selected disabled>Select a User</option>
+                                {% for user in users %}
+                                <option id="dropdown" value="{{ user.user_id }}">{{ user.user_id }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+            </form>
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-square"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">Log In</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Log Out</a></li>
+                    </ul>
+                </li>
+                </ul>
+            </div>
+        </div>
+        </nav>             
+        <!-- Navbar End -->
+
+        <!-- Sidebar Start -->
+        <div class="offcanvas offcanvas-start bg-dark text-white side-bar" data-bs-scroll="true" tabindex="-1" id="offcanvas" aria-labelledby="offcanvas">
+            <div class="offcanvas-body p-0">
+                <nav class="navbar-dark">
+                    <ul class="navbar-nav">
+                        <li>
+                            <li class="my-4">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <a href="#" class="nav-link px-3 active">
+                                <span class="me-2">
+                                    <i class="bi bi-wrench-adjustable-circle"></i>
+                                </span>
+                                <span class="fw-bold">Filters</span>
+                            </a>
+                        </li>
+                        <li class="my-4">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <div class="text-muted small fw-bold text-uppercase px-3">MONTH</div>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link px-3">
+                                <form id="dateForm">
+                                    <!-- <label for="month">Date:</label> -->
+                                    <select class="form-control" id="month" name="month">
+                                        <option value="" selected disabled>Select a month</option>
+                                        {% for month in months %}
+                                        <option id="dropdown" value="{{ month.month }}">{{ month.month }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            </a>
+                        </li>
+                        <li class="my-4">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link px-3">
+                                <span class="me-2">
+                                <i class="bi bi-info-circle"></i>
+                                </span>
+                                Provided by 
+                                <span class="fw-bold">CBM Team 1:</span>
+                                Joseph Okeno-Storms, Tripp Mimms, Jackson Miskill, Jett Yan
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- Sidebar End -->
+
+        <!-- Main Content Start -->
+        <main class="mt-5 pt-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 fw-bold fs-3 header">Welcome to EVO-LIFE!</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 mb-3">
+                        <div class="card-body card-welcome">
+                            <p id="welcome-message"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="card-table">
+                            <div class="card-header">
+                                Your Health Metrics
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="health-metrics-table" class="table data-table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>NREMHR</th>
+                                                <th>RMSSD</th>
+                                                <th>spo2</th>
+                                                <th>exertion_points_%</th>
+                                                <th>responsiveness_points_%</th>
+                                                <th>distance</th>
+                                                <th>activityType</th>
+                                                <th>bpm</th>
+                                                <th>lightly_active_mins</th>
+                                                <th>moderately_active_mins</th>
+                                                <th>very_active_mins</th>
+                                                <th>sedentary_mins</th>
+                                                <th>mindfulness_session</th>
+                                                <th>sleep_duration</th>
+                                                <th>minutesAsleep</th>
+                                                <th>minutesAwake</th>
+                                                <th>sleep_efficiency</th>
+                                                <th>gender</th>
+                                                <th>bmi</th>
+                                                <th>gym</th>
+                                                <th>home</th>
+                                                <th>outdoors</th>
+                        
+                                                <th>stress_score</th>
+                                                <th>sleep_points_%</th>
+                                                <th>tense_anxious</th>
+                                                <th>tired</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Automatically populated by JavaScript -->
+                                        </tbody>
+                                        <!-- <tfoot>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Office</th>
+                                                <th>Age</th>
+                                                <th>Start date</th>
+                                                <th>Salary</th>
+                                            </tr>
+                                        </tfoot> -->
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                        <div class="card-header">Your Genotype</div>
+                        <div class="card-body" id="gene-visualization">
+                            
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                        <div class="card-header">Your Phenotype</div>
+                            <div class="card-body" id="phenotype-visualization">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                        <div class="card-header">Health Trends</div>
+                        <div class="card-body">
+                            <!-- <div id="gene-visualization"></div> -->
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                        <div class="card-header">Test New Metrics</div>
+                        <div class="card-body">
+                            <!-- <div id="phenotype-visualization"> -->
+                        </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                            <div class="card-header">New Genotype</div>
+                            <div class="card-body">
                                 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Automatically populated by JavaScript -->
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-chart">
+                            <div class="card-header">New Phenotype</div>
+                            <div class="card-body">
+                                
+                            </div>
+                        </div>
+                    </div> 
                 </div>
             </div>
-            <div class="column">
-                <h2>Your Health Genome</h2>
-                <div id="gene-visualization"></div>
-                <div id="phenotype-visualization">
-                    <p>0.864</p>
-                </div>
-                
-            </div>
-        </div>
+        </main>
+        <!-- Main Content End -->
 
-        <!-- Container for new sections -->
-        <div class="data-row">
-            <div class="column">
-                <h2>New Health Metrics</h2>
-                <a href="/add">Add New Metrics</a>
-            </div>
-            <div class="column">
-                <h2>Your new Gene</h2>
-                
-            </div>
-        </div>
+        <!-- Scripts Start -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+        <script src="/static/js/script.js"></script>
+        <script src="/static/js/main.js"></script>
+        <!-- Scripts End -->
 
-    </div>
-
-    <!-- JavaScript -->
-    <script src="/static/scripts/main.js"></script>
-
-</body>
+    </body>
 </html>
+
+<!-- Tutorial made by Rene-F for AppSeed.us | 2022 | https://github.com/Rene-F -->
