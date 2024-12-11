@@ -82,7 +82,7 @@
                             </a>
                         </li>
                         <li>
-                            <div class="text-muted small fw-bold text-uppercase px-3">MONTH</div>
+                            <div class="text-muted small fw-bold px-3">MONTH</div>
                         </li>
                         <li>
                             <a href="#" class="nav-link px-3">
@@ -105,39 +105,60 @@
                                 <span class="fw-bold">Menu</span>
                             </a>
                             <li>
-                                <a href="#health-metrics" class="text-muted small fw-bold text-uppercase px-3">Health Metrics</a>
+                                <a href="#health-metrics" class="text-muted small px-3 button">Health Metrics</a>
                             </li>
                             <li>
-                                <a href="#gene-visualization" class="text-muted small fw-bold text-uppercase px-3">Genotype</a>
+                                <a href="#gene-visualization" class="text-muted small px-3">Genotype</a>
                             </li>
                             <li>
-                                <a href="#phenotype-visualization" class="text-muted small fw-bold text-uppercase px-3">Phenotype</a>
+                                <a href="#phenotype-visualization" class="text-muted small px-3">Phenotype</a>
                             </li>
                             <li>
-                                <a href="#health-trends" class="text-muted small fw-bold text-uppercase px-3">Health Trends</a>
+                                <a href="#health-trends" class="text-muted small px-3">Health Trends</a>
                             </li>
                             <li>
-                                <a href="#new-health-metrics" class="text-muted small fw-bold text-uppercase px-3">Enter New Metrics</a>
+                                <a href="#phenotype-trends" class="text-muted small px-3">Phenotype Score Trends</a>
                             </li>
                             <li>
-                                <a href="#new-gene-visualization" class="text-muted small fw-bold text-uppercase px-3">New Genotype</a>
+                                <a href="#new-health-metrics" class="text-muted small px-3">Enter a new Day's Metrics</a>
                             </li>
                             <li>
-                                <a href="#new-phenotype-visualization" class="text-muted small fw-bold text-uppercase px-3">New Phenotype</a>
+                                <a href="#new-gene-visualization" class="text-muted small px-3">New Gene</a>
+                            </li>
+                            <li>
+                                <a href="#new-phenotype-visualization" class="text-muted small px-3">New Phenotype Score</a>
                             </li>
                         </li>
 
                         <li class="my-4">
                             <hr class="dropdown-divider">
                         </li>
+
+                        <li>
+                            <a href="#" class="nav-link px-3 active">
+                                <span class="fw-bold">Legend</span>
+                            </a>
+                            <li class="legend">
+                                <div class="text-muted small fw-bold px-3">Per Individual:</div>
+                                <div class="text-muted small px-3"><span>Nucleotide</span> = each metric</div>
+                                <div class="text-muted small px-3"><span>Gene</span> = metrics per day</div>
+                                <div class="text-muted small px-3"><span>Genotype</span> = collection of genes</div>
+                                <div class="text-muted small px-3"><span>Phenotype Score</span> = health score per Genotype</div>
+                            </li>
+
+                        </li>
+
+                        <li class="my-4">
+                            <hr class="dropdown-divider">
+                        </li>
+
                         <li>
                             <a href="#" class="nav-link px-3">
                                 <span class="me-2">
-                                <i class="bi bi-info-circle"></i>
+                                    <i class="bi bi-info-circle"></i>
                                 </span>
-                                Provided by 
-                                <span class="fw-bold">CBM Team 1:</span>
-                                Joseph Okeno-Storms, Tripp Mimms, Jackson Miskill, Jett Yan
+                                <span class="fw-bold">CBM Team 1 Fall 2024</span><br>
+                                Joseph Okeno-Storms, Tripp Mims, Jackson Miskill, Jett Yan
                             </a>
                         </li>
                     </ul>
@@ -237,7 +258,7 @@
                 <div class="row mt-2">
                     <div class="col-md-6">
                         <div class="card-chart">
-                            <div class="card-header">Health Trends</div>
+                            <div class="card-header">Individual Behavior Trends</div>
                             <div class="card-body" id="health-trends">
                                 <canvas id="health-trends-chart"></canvas>
                             </div>
@@ -246,10 +267,10 @@
 
                     <div class="col-md-6">
                         <div class="card-chart">
-                        <div class="card-header">Test New Metrics</div>
-                        <div class="card-body" id="new-health-metrics">
-                            
-                        </div>
+                            <div class="card-header">Phenotype Score Trend</div>
+                            <div class="card-body" id="phenotype-trends">
+                                <canvas id="phenotype-trends-chart"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -258,9 +279,25 @@
                 <br>
 
                 <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="card-table">
+                            <div class="card-header">
+                                Enter a new Day's Metrics
+                            </div>
+                            <div class="card-body" id="new-health-metrics">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <br>
+
+                <div class="row mt-2">
                     <div class="col-md-6">
                         <div class="card-chart">
-                            <div class="card-header">New Genotype</div>
+                            <div class="card-header">New Gene</div>
                             <div class="card-body" id="new-gene-visualization">
                                 
                             </div>
