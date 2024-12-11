@@ -134,8 +134,8 @@ function createAnimatedGeneStrands(encodings, encoding_sums) {
         // Normalize the sum to a range of 0 to 1
         const normalizedSum = Math.max(0, Math.min((sum - minSum) / (maxSum - minSum), 1));
 
-        const green = Math.round(255 * (1 - normalizedSum)); // More red for lower normalized scores
-        const red = Math.round(255 * normalizedSum);    // More green for higher normalized scores
+        const red = Math.round(255 * (1 - normalizedSum)); // More red for lower normalized scores
+        const green = Math.round(255 * normalizedSum);    // More green for higher normalized scores
 
         lineColors.push(`rgb(${red}, ${green}, 0)`);
         lineTextColors.push(`rgb(${red}, ${green}, 0, 0.4)`);
