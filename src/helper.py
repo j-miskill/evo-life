@@ -119,22 +119,25 @@ class GenomeCreator:
     
     def write_genomes_to_csv(self, path):
         """
-            id | day | encoding
-            id | day | encoding
-            id | day | encoding
-            id | day | encoding
+            encoding_id | user_id | day | encoding
+            encoding_id | user_id | day | encoding
+            encoding_id | user_id | day | encoding
+            encoding_id | user_id | day | encoding
         """
         final_df = pd.DataFrame()
+        encoding_id=1
         for id, genome in self.genomes.items():
             for d in range(0, len(genome.geneset)):
-                tmp_dict = {"id": [id], 
+                tmp_dict = {"encoding_id": [encoding_id],
+                            "user_id": [id], 
                             "day":[d],
                             "encoding": [str(genome.geneset[d])]}
                 new_row = pd.DataFrame(tmp_dict)
+                encoding_id += 1
 
                 final_df = pd.concat([final_df, new_row])
-            
-        final_df.to_csv(path)
+                
+        final_df.to_csv(path, index=False)
 
     def get_data_for_individual_phenotype(self, id):
         if self.determine_quality_individual(id=id, quality=0.3):
