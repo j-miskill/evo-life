@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // GENOTYPE LOGIC
 
-function createAnimatedGeneStrands(encodings) {
+function createAnimatedGeneStrands(encodings, encoding_sums) {
     const geneVisualization = document.getElementById('gene-visualization');
     geneVisualization.innerHTML = ''; // Clear existing elements
 
@@ -116,6 +116,33 @@ function createAnimatedGeneStrands(encodings) {
 
     const nodes = [];
     const lines = [];
+    const lineColors = [];
+    const lineTextColors = [];
+
+
+    // Define the min and max sum for normalization
+    const minSum = 100;  // Adjust this based on your expected minimum sum
+    const maxSum = 150; // Adjust this based on your expected maximum sum
+
+
+    // Calculate the sum of the encodings
+
+    for (let i = 0; i < encoding_sums.length; i++) {
+
+        const sum = encoding_sums[i];
+
+        // Normalize the sum to a range of 0 to 1
+        const normalizedSum = Math.max(0, Math.min((sum - minSum) / (maxSum - minSum), 1));
+
+        const green = Math.round(255 * (1 - normalizedSum)); // More red for lower normalized scores
+        const red = Math.round(255 * normalizedSum);    // More green for higher normalized scores
+
+        lineColors.push(`rgb(${red}, ${green}, 0)`);
+        lineTextColors.push(`rgb(${red}, ${green}, 0, 0.4)`);
+
+
+    };
+    
 
     // Loop through encodings and position elements
     for (let i = 0; i < totalNodes; i++) {
@@ -138,12 +165,14 @@ function createAnimatedGeneStrands(encodings) {
         // Create a connecting line
         const line = document.createElement('div');
         line.className = 'gene-line';
+        line.style.backgroundColor = `${lineColors[i]}`; // Set line color dynamically
         geneVisualization.appendChild(line);
 
         // Add encoding text to the line
         const lineText = document.createElement('div');
         lineText.className = 'line-text';
         lineText.textContent = encodings[i];
+        lineText.style.color = `${lineTextColors[i]}`;
         geneVisualization.appendChild(lineText);
 
         lines.push({ element: line, text: lineText, top: y });
@@ -188,6 +217,7 @@ function createAnimatedGeneStrands(encodings) {
     animateGene();
 }
 
+
 // Fetch Gene Encodings from DB
 document.addEventListener("DOMContentLoaded", function () {
     const dropdownUserId = document.getElementById("user_id");
@@ -199,7 +229,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.length > 0) {
                     const encodings = data.map(item => item.encoding);
-                    createAnimatedGeneStrands(encodings);
+                    const encoding_sums = data.map(item => item.encoding_sum);
+                    createAnimatedGeneStrands(encodings, encoding_sums);
                 }
             })
             .catch(error => {
@@ -293,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let healthChart;
 
-    function fetchHealthMetrics(userId) {
+    function fetchHealthTrends(userId) {
         fetch(`/get_metric_trends/${userId}`)
             .then(response => response.json())
             .then(healthData => {
@@ -308,31 +339,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     {
                         label: 'Sleep Efficiency',
                         data: sleep_efficiency,
-                        borderColor: 'blue',
+                        borderColor: '#1984c5',
                         fill: false,
                     },
                     {
                         label: 'Distance/100',
                         data: distance,
-                        borderColor: 'green',
+                        borderColor: '#87bc45',
                         fill: false,
                     },
                     {
                         label: 'Heart Rate',
                         data: bpm,
-                        borderColor: 'red',
+                        borderColor: '#c23728',
                         fill: false,
                     },
                     {
                         label: 'Sedentary Mins/10',
                         data: sedentary_minutes,
-                        borderColor: 'yellow',
+                        borderColor: '#beb9db',
                         fill: false,
                     },
                     {
                         label: 'Active Mins/10',
                         data: total_active,
-                        borderColor: 'purple',
+                        borderColor: '#776bcd',
                         fill: false,
                     },
                 ]);
@@ -367,10 +398,79 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Initial fetch for the default user
-    fetchHealthMetrics(dropdownUserId.value);
+    fetchHealthTrends(dropdownUserId.value);
 
     // Update on user selection change
     dropdownUserId.addEventListener("change", () => {
-        fetchHealthMetrics(dropdownUserId.value);
+        fetchHealthTrends(dropdownUserId.value);
     });
 });
+
+
+// PHENOTYPE TRENDS
+
+document.addEventListener("DOMContentLoaded", function () {
+    const dropdownUserId = document.getElementById("user_id");
+    if (!dropdownUserId) {
+        console.error("Dropdown element with ID 'user_id' not found.");
+        return;
+    }
+
+    let phenotypeChart;
+
+    function fetchPhenotypeTrends(userId) {
+        fetch(`/get_phenotype_trends/${userId}`)
+            .then(response => response.json())
+            .then(phenoTypeData => {
+                const labels = phenoTypeData.map(item => item.month);
+                const phenotype_score = phenoTypeData.map(item => item.phenotype_score);
+                
+                updateChart(labels, [
+                    {
+                        label: 'Phenotype Score',
+                        data: phenotype_score,
+                        borderColor: '#8bd3c7',
+                        fill: false,
+                    }
+                    
+                ]);
+            })
+            .catch(error => console.error('Error fetching health metrics:', error));
+    }
+
+    function updateChart(labels, datasets) {
+        if (phenotypeChart) {
+            phenotypeChart.destroy(); // Clear the previous chart
+        }
+
+        const ctx = document.getElementById('phenotype-trends-chart').getContext('2d');
+        phenotypeChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Month' },
+                    },
+                    y: {
+                        title: { display: true, text: 'Values' },
+                    },
+                },
+            },
+        });
+    }
+
+    // Initial fetch for the default user
+    fetchPhenotypeTrends(dropdownUserId.value);
+
+    // Update on user selection change
+    dropdownUserId.addEventListener("change", () => {
+        fetchPhenotypeTrends(dropdownUserId.value);
+    });
+});
+
+
