@@ -168,3 +168,5 @@ data/
 # python environment stuff
 .DS_Store
 cbmenv/*
+
+venv-3.11/

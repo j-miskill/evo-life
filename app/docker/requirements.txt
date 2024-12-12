@@ -3,3 +3,7 @@ mysql-connector-python
 joblib
 numpy
 scikit-learn
+# tensorflow
+matplotlib
+pandas
+requests
