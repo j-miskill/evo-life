@@ -1,6 +1,6 @@
 from datetime import datetime
-import tensorflow as tf
 import numpy as np
+from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
@@ -123,6 +123,44 @@ class Genome:
                 return self.geneset[day]
         print("Geneset does not include: ", day, ". Please request a valid day.")
 
+    def create_encoding(self):
+        """
+           1. take all fields and create a binary string 0101010101010101010100101010101110010101010101 
+           2. real value numbers [] 
+
+           sklearn.preprocessing for string mapping
+           ordinal encoder, label encoder
+
+        """
+        le = LabelEncoder()
+
+        gene_attributes = [a for a in vars(self) if not a.startswith("__")]
+
+        g_to_list = []
+
+        for ga in gene_attributes:
+            if ga == "id" or ga == "create_encoding" or ga == "activityType":
+                continue
+            else:
+                value = self.__getattribute__(ga)
+                if ga == "bmi":
+                    value = value.replace(">", "")
+                    value = value.replace(">=", "")
+                if ga == "gender":
+                    if value == "MALE":
+                        value = 1
+                    else:
+                        value = 0
+                if type(value) == str and not value.isnumeric():
+                    continue
+
+                if type(value) == str or type(value) == int or type(value) == float:
+                
+                    g_to_list.append(int(value))
+
+        le.fit(g_to_list)
+        encoding = le.transform(g_to_list)
+        return encoding
 
     def calculate_genome_phenotype(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None, prev_phenotype_period=None):
         """
@@ -161,9 +199,9 @@ class Genome:
            then, we recalculate the phenotype
 
 
-           
+        
         """
-        # Ensure the first value is greater than 0.0
+        # Ensure the first value is greater than 0.0\
         stress_score_begin = stress_score[0]
         while stress_score_begin <= 0.0:
             stress_score = stress_score[1:]
@@ -208,3 +246,99 @@ class Genome:
                     normalized_tired) / 4
         
         return phenotype
+
+    def calculate_genome_phenotype_split(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None):
+        def split_into_parts(data, parts=4):
+            """
+            Splits a list into the specified number of equal parts.
+            If the list is not evenly divisible, some parts may differ slightly in size.
+            
+            Args:
+                data (list): The list to split.
+                parts (int): The number of parts to divide the list into.
+            
+            Returns:
+                list: A list of sublists.
+            """
+            # Calculate the approximate size of each part
+            avg_length = len(data) / parts
+            split_data = []
+            last_index = 0
+            
+            for i in range(parts):
+                # Calculate the start and end indices for this part
+                start = last_index
+                end = round((i + 1) * avg_length)
+                split_data.append(data[start:end])
+                last_index = end
+            
+            return split_data
+        
+        def split_into_parts_no_zeros(data, parts=4):
+            """
+            Splits a list into the specified number of equal parts.
+            If the list is not evenly divisible, some parts may differ slightly in size.
+            
+            Args:
+                data (list): The list to split.
+                parts (int): The number of parts to divide the list into.
+            
+            Returns:
+                list: A list of sublists.
+            """
+            # Calculate the approximate size of each part
+            data = [value for value in data if value != 0.0]
+            avg_length = len(data) / parts
+            split_data = []
+            last_index = 0
+            
+            for i in range(parts):
+                # Calculate the start and end indices for this part
+                start = last_index
+                end = round((i + 1) * avg_length)
+                split_data.append(data[start:end])
+                last_index = end
+            
+            return split_data
+        
+        anxiety_split = split_into_parts(anxiety)
+        tired_split = split_into_parts(tired)
+        stress_score_split = split_into_parts_no_zeros(stress_score)
+        sleep_point_percent_split = split_into_parts_no_zeros(sleep_point_percent)
+
+        phenotype_scores = []
+        for i in range(len(anxiety_split)):
+            phenotype_score = self.calculate_genome_phenotype(
+                anxiety_split[i],
+                tired_split[i],
+                stress_score_split[i],
+                sleep_point_percent_split[i]
+            )
+            phenotype_scores.append(phenotype_score)
+        return phenotype_scores
+
+
+    # def calculate_gene_phenotype(self):
+    #     """
+    #         Day to day phenotype calculation
+
+    #         ANXIOUS
+    #         TIRED
+
+    #         % of days that you were anxious
+    #         % of days that you were tired
+
+
+    #     """
+    #     pass
+            
+        
+
+    
+
+
+
+
+
+
+    
