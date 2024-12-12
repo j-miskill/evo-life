@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Metrics</title>
+</head>
+<body>
+    <h1>Add New Health Metrics</h1>
+    <form method="post" action="/add">
+        <label>Gender:</label>
+        <input type="text" name="gender" required><br>
+        <label>Date:</label>
+        <input type="date" name="date" required><br>
+        <label>NREM HR:</label>
+        <input type="number" name="nremhr" step="0.1" required><br>
+        <label>RMSSD:</label>
+        <input type="number" name="rmssd" step="0.1" required><br>
+        <!-- Add more fields -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

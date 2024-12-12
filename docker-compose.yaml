@@ -1,109 +1,109 @@
 volumes:
   mysql_data:
-  airflow_postgres_data:
-  airflow_data:
+  # airflow_postgres_data:
+  # airflow_data:
 
 networks:
   cbm_network:
     driver: bridge
 
-x-airflow-common:
-  &airflow-common
-  image: apache/airflow:latest
-  environment:
-    - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-pg-db:5432/airflow
-    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-    - AIRFLOW__CORE__FERNET_KEY=FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
-    - AIRFLOW__CORE__LOAD_EXAMPLES=False
-    - AIRFLOW__CORE__LOGGING_LEVEL=INFO
-    - AIRFLOW__WEBSERVER__RBAC=True
-    - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
-    - AIRFLOW__WEBSERVER__COOKIE_SECURE=False
-    - AIRFLOW__WEBSERVER__BASE_URL=http://localhost:8080
-    - AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS=True
-    - AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT=600
-    - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=True
-    - AIRFLOW__CORE__DAG_RUN_CONF_OVERRIDES_PARAMS=True
-    - _PIP_ADDITIONAL_REQUIREMENTS=numpy pandas
-    - TZ=UTC
-  volumes:
-    - ./airflow/airflow.cfg:/opt/airflow/airflow.cfg 
-    - ./airflow/dags:/opt/airflow/dags
-    - airflow_data:/var/lib/airflow
-    - ./:/opt/airflow/code
-    - /etc/localtime:/etc/localtime:ro
+# x-airflow-common:
+#   &airflow-common
+#   image: apache/airflow:latest
+#   environment:
+#     - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-pg-db:5432/airflow
+#     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+#     - AIRFLOW__CORE__FERNET_KEY=FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
+#     - AIRFLOW__CORE__LOAD_EXAMPLES=False
+#     - AIRFLOW__CORE__LOGGING_LEVEL=INFO
+#     - AIRFLOW__WEBSERVER__RBAC=True
+#     - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+#     - AIRFLOW__WEBSERVER__COOKIE_SECURE=False
+#     - AIRFLOW__WEBSERVER__BASE_URL=http://localhost:8080
+#     - AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS=True
+#     - AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT=600
+#     - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=True
+#     - AIRFLOW__CORE__DAG_RUN_CONF_OVERRIDES_PARAMS=True
+#     - _PIP_ADDITIONAL_REQUIREMENTS=numpy pandas
+#     - TZ=UTC
+#   volumes:
+#     - ./airflow/airflow.cfg:/opt/airflow/airflow.cfg 
+#     - ./airflow/dags:/opt/airflow/dags
+#     - airflow_data:/var/lib/airflow
+#     - ./:/opt/airflow/code
+#     - /etc/localtime:/etc/localtime:ro
       
-  depends_on:
-    airflow-pg-db:
-      condition: service_healthy
-  networks:
-    - cbm_network
+#   depends_on:
+#     airflow-pg-db:
+#       condition: service_healthy
+#   networks:
+#     - cbm_network
 
 
 services:
 
-  # PostgreSQL Database for Airflow
-  airflow-pg-db:
-    image: postgres:latest
-    container_name: cbm_airflow_pg_db
-    environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-    ports:
-      - "5432:5432"
-    volumes:
-      - airflow_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U airflow"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-    networks:
-      - cbm_network
+  # # PostgreSQL Database for Airflow
+  # airflow-pg-db:
+  #   image: postgres:latest
+  #   container_name: cbm_airflow_pg_db
+  #   environment:
+  #     POSTGRES_USER: airflow
+  #     POSTGRES_PASSWORD: airflow
+  #     POSTGRES_DB: airflow
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - airflow_postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U airflow"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 5
+  #   networks:
+  #     - cbm_network
 
-  # Airflow Init
-  airflow-init:
-    << : *airflow-common
-    container_name: cbm_airflow_init
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        airflow db init && \
-        airflow users create \
-          --username cbmteam \
-          --firstname CBM \
-          --lastname Team \
-          --email cbm@example.com \
-          --role Admin \
-          --password evolife
+  # # Airflow Init
+  # airflow-init:
+  #   << : *airflow-common
+  #   container_name: cbm_airflow_init
+  #   entrypoint: /bin/bash
+  #   command:
+  #     - -c
+  #     - |
+  #       airflow db init && \
+  #       airflow users create \
+  #         --username cbmteam \
+  #         --firstname CBM \
+  #         --lastname Team \
+  #         --email cbm@example.com \
+  #         --role Admin \
+  #         --password evolife
 
-  # Airflow Scheduler
-  airflow-scheduler:
-    << : *airflow-common
-    command: airflow scheduler
-    container_name: cbm_airflow_scheduler
-    restart: always
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
+  # # Airflow Scheduler
+  # airflow-scheduler:
+  #   << : *airflow-common
+  #   command: airflow scheduler
+  #   container_name: cbm_airflow_scheduler
+  #   restart: always
+  #   depends_on:
+  #     airflow-init:
+  #       condition: service_completed_successfully
 
-  # Airflow Webserver
-  airflow-webserver:
-    << : *airflow-common
-    command: airflow webserver
-    container_name: cbm_airflow_webserver
-    ports:
-      - "8080:8080"
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
+  # # Airflow Webserver
+  # airflow-webserver:
+  #   << : *airflow-common
+  #   command: airflow webserver
+  #   container_name: cbm_airflow_webserver
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     airflow-init:
+  #       condition: service_completed_successfully
 
 
   # MySQL Database for App
   cbm-mysql-db:
-    image: mysql:latest
+    image: mysql:latest 
     container_name: cbm_app_db
     environment:
       MYSQL_ROOT_PASSWORD: evolife
@@ -116,6 +116,18 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/evolife_db_init.sql:/docker-entrypoint-initdb.d/evolife_db_init.sql
+      - ./prepped/database_daily.csv:/var/lib/mysql-files/database_daily.csv
+      - ./prepped/database_individuals.csv:/var/lib/mysql-files/database_individuals.csv
+      - ./prepped/encodings.csv:/var/lib/mysql-files/encodings.csv
+      - ./prepped/database_phenotype_data.csv:/var/lib/mysql-files/database_phenotype_data.csv
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - cbm_network
 
   # App Service
   flask-app:
@@ -132,7 +144,8 @@ services:
     volumes:
       - ./app:/app
     depends_on:
-      - cbm-mysql-db
+      cbm-mysql-db:
+        condition: service_healthy
     ports:
       - "5050:5050"
     networks:
@@ -144,4 +157,5 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
 
