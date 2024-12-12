@@ -185,7 +185,7 @@ IGNORE 1 ROWS
 CREATE TABLE IF NOT EXISTS phenotype_data (
     pheno_id INT PRIMARY KEY,
     user_id VARCHAR(30),
-    month INT,
+    month VARCHAR(30),
     phenotype_score FLOAT
 ) ENGINE=InnoDB;
 

@@ -121,7 +121,7 @@ function createAnimatedGeneStrands(encodings, encoding_sums) {
 
 
     // Define the min and max sum for normalization
-    const minSum = 100;  // Adjust this based on your expected minimum sum
+    const minSum = 50;  // Adjust this based on your expected minimum sum
     const maxSum = 150; // Adjust this based on your expected maximum sum
 
 
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     phenotypeVisualization.innerHTML = `<h2>${phenotypeScore.toFixed(2)}</h2>`;
 
                     // Normalize the score to map to the red-green scale
-                    const normalizedScore = Math.max(0, Math.min((phenotypeScore - 0.45) / 0.4, 1)); // Scale 0.6 to 1.0 to 0-1
+                    const normalizedScore = Math.max(0, Math.min((phenotypeScore - 0.45) / 0.6, 1)); // Scale 0.6 to 1.0 to 0-1
                     const red = Math.round(255 * (1 - normalizedScore)); // More red for lower normalized scores
                     const green = Math.round(255 * normalizedScore);    // More green for higher normalized scores
 
