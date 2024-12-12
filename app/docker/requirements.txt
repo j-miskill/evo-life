@@ -2,8 +2,8 @@ flask
 mysql-connector-python 
 joblib
 numpy
-scikit-learn
-# tensorflow
-matplotlib
+# scikit-learn
+# # tensorflow
+# matplotlib
 pandas
-requests
+# requests

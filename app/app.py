@@ -4,6 +4,7 @@ import mysql.connector
 from db_connector import get_db_connection
 import os
 import pandas as pd
+import calendar
 
 app = Flask(__name__)
 
@@ -56,7 +57,10 @@ def get_encodings(user_id, month):
 def get_phenotype(user_id, month):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT phenotype_score FROM phenotype_data WHERE (user_id = %s AND month = %s)", (user_id, month))
+    print("GETTING MONTH NAME HERE......")
+    print(month)
+    print(calendar.month_name[int(month)])
+    cursor.execute("SELECT phenotype_score FROM phenotype_data WHERE (user_id = %s AND month = %s)", (user_id, calendar.month_name[int(month)]))
     phenotype_score = cursor.fetchone()
     conn.close()
     return jsonify([phenotype_score] if phenotype_score else [])

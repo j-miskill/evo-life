@@ -46,7 +46,7 @@ Evolife is a machine learning-driven health tracking and phenotype prediction pl
 
 ---
 
-## Tools (In Progress)
+## Tools
 
 - Programming Languages
     - Python
@@ -65,13 +65,13 @@ Evolife is a machine learning-driven health tracking and phenotype prediction pl
 
 ---
 
-## Database (In Progress)
+## MySQL Database 
 
 **DB Name**: cbm_health_db \
 **Tables**:
-- **users**: to store user information
 - **health_metrics**: to store raw health metrics for each user (decoded health metrics & phentoypes)
-- **health_encodings**: to store encoded health metrics (genotypes) and encoded phenotype
+- **encoded_health_metrics**: to store encoded health metrics (genotypes)
+- **phenotype_data**: to store encoded phenotype scores
 
 ---
 
@@ -177,13 +177,10 @@ Run these commands from our project root:
 
 ---
 
-### Ports
+### Standing up the Dashboard
 
-- Airflow Webserver: http://localhost:8080
-    - Useful for viewing Training and Inference Pipelines and manually running them
-    - username: cbmteam, pw: evolife
-- App: http://localhost:5050
-- MySQL: `3306`
-    - If we need direct access from tools like MySQL Workbench
+- Start containers using `docker-compose up --build`
+- Access App: http://localhost:5050
+
 
 
