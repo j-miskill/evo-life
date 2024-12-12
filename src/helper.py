@@ -121,7 +121,7 @@ class GenomeCreator:
         if self.determine_quality_individual(id=id, quality=0.3):
             id_records = self.df.loc[self.df['id'] == f'{id}']
             id_records = id_records.sort_values(by='day')
-            individual_data = {"anxiety": id_records["TENSE/ANXIOUS"].values, "tired": id_records["TIRED"].values, "stress_score": id_records["stress_score"].values, "sleep_points_percentage": id_records["sleep_points_percentage"].values}
+            individual_data = {"date": id_records["date"].values, "anxiety": id_records["TENSE/ANXIOUS"].values, "tired": id_records["TIRED"].values, "stress_score": id_records["stress_score"].values, "sleep_points_percentage": id_records["sleep_points_percentage"].values}
             return individual_data
         
     def get_all_phenotype_data(self):

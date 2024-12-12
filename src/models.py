@@ -161,32 +161,53 @@ class Genome:
         
         """
         # Ensure the first value is greater than 0.0\
-        stress_score_begin = stress_score[0]
-        while stress_score_begin <= 0.0:
-            stress_score = stress_score[1:]
+        if len(stress_score) > 0:
             stress_score_begin = stress_score[0]
+            while stress_score_begin <= 0.0 and len(stress_score) != 0:
+                stress_score = stress_score[1:]
+                if len(stress_score) == 0:
+                    break
+                stress_score_begin = stress_score[0]
 
-        # Ensure the last value is greater than 0.0
-        stress_score_end = stress_score[-1]
-        while stress_score_end <= 0.0:
-            stress_score = stress_score[:-1]
+            # Ensure the last value is greater than 0.0
+        if len(stress_score) > 0:
             stress_score_end = stress_score[-1]
+            while stress_score_end <= 0.0 and len(stress_score) != 0:
+                stress_score = stress_score[:-1]
+                if len(stress_score) == 0:
+                    break
+                stress_score_end = stress_score[-1]
+                
+            
 
+        if len(sleep_point_percent) > 0:
         # Ensure the first value is greater than 0.0
-        sleep_point_percent_begin = sleep_point_percent[0]
-        while sleep_point_percent_begin <= 0.0:
-            sleep_point_percent = sleep_point_percent[1:]
             sleep_point_percent_begin = sleep_point_percent[0]
-
-        # Ensure the last value is greater than 0.0
-        sleep_point_percent_end = sleep_point_percent[-1]
-        while sleep_point_percent_end <= 0.0:
-            sleep_point_percent = sleep_point_percent[:-1]
+            while sleep_point_percent_begin <= 0.0 and len(sleep_point_percent) != 0:
+                sleep_point_percent = sleep_point_percent[1:]
+                if len(sleep_point_percent) == 0:
+                    break
+                sleep_point_percent_begin = sleep_point_percent[0]
+                
+        if len(sleep_point_percent) > 0:
+            # Ensure the last value is greater than 0.0
             sleep_point_percent_end = sleep_point_percent[-1]
+            while sleep_point_percent_end <= 0.0 and len(sleep_point_percent) != 0:
+                sleep_point_percent = sleep_point_percent[:-1]
+                if len(sleep_point_percent) == 0:
+                    break
+                sleep_point_percent_end = sleep_point_percent[-1]
+                
+            
 
-
-        stress_score_change = (stress_score_end - stress_score_begin) / stress_score_begin
-        sleep_point_change = (sleep_point_percent_end - sleep_point_percent_begin) / sleep_point_percent_begin
+        if stress_score_begin > 0.0 and stress_score_end > 0.0:
+            stress_score_change = (stress_score_end - stress_score_begin) / stress_score_begin
+        else:
+            stress_score_change = 0.0
+        if sleep_point_percent_begin > 0.0 and sleep_point_percent_end > 0.0:
+            sleep_point_change = (sleep_point_percent_end - sleep_point_percent_begin) / sleep_point_percent_begin        
+        else:
+            sleep_point_change = 0.0
         
         anxiety_average = np.average(anxiety)
         tired_average = np.average(tired)
@@ -206,7 +227,7 @@ class Genome:
         
         return phenotype
 
-    def calculate_genome_phenotype_split(self, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None):
+    def calculate_genome_phenotype_split(self, date:list, anxiety:list, tired:list, stress_score:list, sleep_point_percent:list, prev_phenotype=None):
         def split_into_parts(data, parts=4):
             """
             Splits a list into the specified number of equal parts.
@@ -221,49 +242,27 @@ class Genome:
             """
             # Calculate the approximate size of each part
             avg_length = len(data) / parts
+            month_splits = [datetime.strptime(day, "%Y-%m-%d").strftime("%B") for day in date]
             split_data = []
             last_index = 0
-            
-            for i in range(parts):
+            ret_data = {}
+            months_in_order = []
+            for d in month_splits:
+                if d not in ret_data.keys():
+                    ret_data[d] = []
+                    months_in_order.append(d)
+            for i in range(len(month_splits)):
                 # Calculate the start and end indices for this part
-                start = last_index
-                end = round((i + 1) * avg_length)
-                split_data.append(data[start:end])
-                last_index = end
+                ret_data[month_splits[i]].append(data[i])
             
-            return split_data
+            for m in months_in_order:
+                split_data.append(ret_data[m])
+            return split_data, months_in_order
         
-        def split_into_parts_no_zeros(data, parts=4):
-            """
-            Splits a list into the specified number of equal parts.
-            If the list is not evenly divisible, some parts may differ slightly in size.
-            
-            Args:
-                data (list): The list to split.
-                parts (int): The number of parts to divide the list into.
-            
-            Returns:
-                list: A list of sublists.
-            """
-            # Calculate the approximate size of each part
-            data = [value for value in data if value != 0.0]
-            avg_length = len(data) / parts
-            split_data = []
-            last_index = 0
-            
-            for i in range(parts):
-                # Calculate the start and end indices for this part
-                start = last_index
-                end = round((i + 1) * avg_length)
-                split_data.append(data[start:end])
-                last_index = end
-            
-            return split_data
-        
-        anxiety_split = split_into_parts(anxiety)
-        tired_split = split_into_parts(tired)
-        stress_score_split = split_into_parts_no_zeros(stress_score)
-        sleep_point_percent_split = split_into_parts_no_zeros(sleep_point_percent)
+        anxiety_split, months_in_order = split_into_parts(anxiety)
+        tired_split, _ = split_into_parts(tired)
+        stress_score_split, _ = split_into_parts(stress_score)
+        sleep_point_percent_split, _ = split_into_parts(sleep_point_percent)
 
         phenotype_scores = []
         for i in range(len(anxiety_split)):
@@ -274,7 +273,7 @@ class Genome:
                 sleep_point_percent_split[i]
             )
             phenotype_scores.append(phenotype_score)
-        return phenotype_scores
+        return (phenotype_scores, months_in_order)
 
 
     # def calculate_gene_phenotype(self):
